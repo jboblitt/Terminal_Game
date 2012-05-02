@@ -207,9 +207,8 @@ int main(int argc, char* argv[]) {
 
 		if (firstCycle)
 		{
-
 			// wait a specific number of micro-seconds
-			//usleep(500*1000);
+			usleep(500*1000);
 
 			/* Print the current string vector and update the string array */
 			printStrVector();
@@ -228,11 +227,13 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			rotate(myvector.begin(),myvector.begin()+9,myvector.end());
-			printStrVector();
+			
 
 			refresh();
-			//usleep(500*1000);
+			usleep(500*1000);
+			
+			rotate(myvector.begin(),myvector.begin()+9,myvector.end());
+			printStrVector();
 		}
 
 	
