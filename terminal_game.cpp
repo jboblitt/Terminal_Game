@@ -113,7 +113,7 @@ inline void draw(struct Position obj, const char* art) {
 void draw_all() {
     clear();
 
-	/* Draws counter for lives on screen */
+/* Draws counter for lives on screen */
     //mvprintw(rows-1, 0, "Lives: %u", ply.lives);
     
     if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
@@ -235,6 +235,10 @@ int main(int argc, char* argv[]) {
 			//usleep(500*1000);
 		}
 
+	
+	
+			
+	
 }
 
 	printw("Press any key to exit the game");
