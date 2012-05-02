@@ -125,39 +125,30 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
-
-   // for (x=0; x < PPF; ++x) {
    halfdelay(5);
    
    
-        in = getch();
-       // usleep((SECOND/FPS) / PPF);
+   in = getch();
+		
+    if (in == KEY_LEFT || in == 'a' || in == 'h') {
+        ply.pos.x -= (ply.pos.x == 0) ? 0 : 1;
+    } 
+    else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
+        ply.pos.x += (ply.pos.x == cols-PLAYER_SIZE) ? 0 : 1;
+    } else if (in == 'q' || in == KEY_EXIT) {
+        quit("Exited\n");
+    } else if (in == 'p') {
+    	nocbreak();
+		nodelay(stdscr,FALSE);
+        mvprintw(0, 0, "~Paused~");
+		getch();
+		nodelay(stdscr,TRUE);
+    }
+    
+    if( in != ERR ) {
+		draw_all();
+	}
 
-/*
-        if (in == ERR) {
-            continue;
-        }
-	*/
-		
-		
-        if (in == KEY_LEFT || in == 'a' || in == 'h') {
-            ply.pos.x -= (ply.pos.x == 0) ? 0 : 1;
-        } 
-        else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
-            ply.pos.x += (ply.pos.x == cols-PLAYER_SIZE) ? 0 : 1;
-        } else if (in == 'q' || in == KEY_EXIT) {
-            quit("Exited\n");
-        } else if (in == 'p') {
-			nodelay(stdscr,FALSE);
-            mvprintw(0, 0, "~Paused~");
-			getch();
-			nodelay(stdscr,TRUE);
-        }
-        
-        if( in != ERR ) {
-			draw_all();
-		}
-   // }
 }
 
 // Shifts contents of the string array to the right once
@@ -195,7 +186,7 @@ int main(int argc, char* argv[]) {
 
     ply.lives = LIVES;
 	ply.pos.y = 15;
-
+	ply.pos.x = INDENTATION + rainWidth/2;
     
 
 	// start of game loop
@@ -207,8 +198,9 @@ int main(int argc, char* argv[]) {
 
 		if (firstCycle)
 		{
+
 			// wait a specific number of micro-seconds
-			usleep(500*1000);
+			//usleep(500*1000);
 
 			/* Print the current string vector and update the string array */
 			printStrVector();
@@ -227,13 +219,11 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			
-
-			refresh();
-			usleep(500*1000);
-			
 			rotate(myvector.begin(),myvector.begin()+9,myvector.end());
 			printStrVector();
+
+			refresh();
+			//usleep(500*1000);
 		}
 
 	
