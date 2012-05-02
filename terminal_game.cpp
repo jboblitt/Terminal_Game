@@ -100,7 +100,7 @@ void quit(const char* seq) {
     clear();
     curs_set(2);
     endwin();
-    printf(seq);
+    cout << seq <<  endl;
     exit(0);
 }
 
@@ -120,6 +120,7 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
+
     for (x=0; x < PPF; ++x) {
         in = getch();
         usleep((SECOND/FPS) / PPF);
@@ -171,6 +172,15 @@ int main(int argc, char* argv[]) {
 	
 	initscr();
 	noecho();
+	cbreak();
+    nodelay(stdscr, TRUE);
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    getmaxyx(stdscr, rows, cols);
+    PLAYER_SIZE = strlen(PLAYER);
+
+    ply.lives = LIVES;
+    
 
 	// start of game loop
 	while (true) {
@@ -193,7 +203,8 @@ int main(int argc, char* argv[]) {
 
 			// change the way we update the string array if we're no longer on our first cycle
 			if (curRun > 8)	firstCycle = false;
-		} 
+		}
+
 		/* If no longer on the first cycle */
 		else 
 		{
@@ -203,28 +214,22 @@ int main(int argc, char* argv[]) {
 			refresh();
 			usleep(300*1000);
 		}
-//Main part used for game
-    initscr();
-    cbreak();
-    nodelay(stdscr, TRUE);
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    getmaxyx(stdscr, rows, cols);
+
+	//Main part used for game
+    //initscr();
+    
+    
 
     srand(time(NULL));
-    PLAYER_SIZE = strlen(PLAYER);
+    
 
-    ply.lives = LIVES;
-
-    while (1) {
-        draw_all();
-
-        run_ply();
-
-        draw_all();
+    
+    draw_all();
+	run_ply();
+	draw_all();
 			
-	}
+	
+}
 
 	printw("Press any key to exit the game");
 	getch();
@@ -233,5 +238,8 @@ int main(int argc, char* argv[]) {
 	
 
 	return 0;
-	}
 }
+
+
+
+
