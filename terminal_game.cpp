@@ -2,10 +2,8 @@
 
 Text based game that needs to:
 
-
-* Take a file input - it gets characters from that file, puts them into arrays
 * Rain letters over a player (which is an ASCII character)
-* Know where our player is at all times, know if a letter exists at that position
+* Know where our player is at all times, know if a letter exists above that player
 
 */
 
@@ -22,7 +20,7 @@ using namespace std;
 
 // GAME VARIABLES
 typedef unsigned short int num;
-#define PLAYER "8_8"
+#define PLAYER "X"
 #define LIVES 5
 #define FPS 20
 #define PPF 50
@@ -191,11 +189,8 @@ int main(int argc, char* argv[]) {
 	// start of game loop
 	while (true) {
 		
-
-
 		run_ply();
 		draw_all();
-
 
 		if (firstCycle)
 		{
@@ -211,7 +206,7 @@ int main(int argc, char* argv[]) {
 			refresh();
 		
 			// wait a specific number of micro-seconds
-			usleep(500*1000);
+			usleep(650*1000);
 
 			// change the way we update the string array if we're no longer on our first cycle
 			if (curRun > 8)	firstCycle = false;
