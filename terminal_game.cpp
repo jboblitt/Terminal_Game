@@ -2,10 +2,8 @@
 
 Text based game that needs to:
 
-
-* Take a file input - it gets characters from that file, puts them into arrays
 * Rain letters over a player (which is an ASCII character)
-* Know where our player is at all times, know if a letter exists at that position
+* Know where our player is at all times, know if a letter exists above that player
 
 */
 
@@ -22,7 +20,7 @@ using namespace std;
 
 // GAME VARIABLES
 typedef unsigned short int num;
-#define PLAYER "8_8"
+#define PLAYER "X"
 #define LIVES 5
 #define FPS 60
 #define PPF 50
@@ -62,6 +60,10 @@ string rainRow2 = "|######  ############|";
 string rainRow1 = "|#######  ###########|";
 string rainRow0 = "|########  ##########|";
 string noStr	= "|                    |";
+
+
+int rainWidth = 20;
+
 
 string strArray[10] = { rainRow0, rainRow1, rainRow2, rainRow3, rainRow4,rainRow5,rainRow6,rainRow7,rainRow8,rainRow9};
 unsigned int index1 = 0;
@@ -112,10 +114,13 @@ void draw_all() {
     clear();
 
 /* Draws counter for lives on screen */
-    mvprintw(rows-1, 0, "Lives: %u", ply.lives); 
+    //mvprintw(rows-1, 0, "Lives: %u", ply.lives);
+    ply.pos.y = 15;
+    if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
+    if (ply.pos.x > INDENTATION + rainWidth) ply.pos.x = INDENTATION;
     draw(ply.pos, PLAYER);
     
-    refresh();
+    //refresh();
 }
 
 //Controls the Player, q- quit, p- pause
@@ -128,15 +133,12 @@ void run_ply() {
         if (in == ERR) {
             continue;
         }
-
+		ply.pos.y = 15;
         if (in == KEY_LEFT || in == 'a' || in == 'h') {
             ply.pos.x -= (ply.pos.x == 0) ? 0 : 1;
-        } else if (in == KEY_UP || in == 'w' || in == 'j') {
-            ply.pos.y -= (ply.pos.y == 0) ? 0 : 1;
-        } else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
+        } 
+        else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
             ply.pos.x += (ply.pos.x == cols-PLAYER_SIZE) ? 0 : 1;
-        } else if (in == KEY_DOWN || in == 's' || in == 'l') {
-            ply.pos.y += (ply.pos.y == rows-1) ? 0 : 1;
         } else if (in == 'q' || in == KEY_EXIT) {
             quit("Exited\n");
         } else if (in == 'p') {
@@ -180,11 +182,15 @@ int main(int argc, char* argv[]) {
     PLAYER_SIZE = strlen(PLAYER);
 
     ply.lives = LIVES;
+
+
     
 
 	// start of game loop
 	while (true) {
 		
+		run_ply();
+		draw_all();
 
 		if (firstCycle)
 		{
@@ -192,6 +198,7 @@ int main(int argc, char* argv[]) {
 			/* Print the current string vector and update the string array */
 			printStrVector();
 			updateStrArray();
+
 			/* Update the current run that we are on and the current string array index */
 			strIndex++;
 			curRun++;
@@ -199,7 +206,7 @@ int main(int argc, char* argv[]) {
 			refresh();
 		
 			// wait a specific number of micro-seconds
-			usleep(300*1000);
+			usleep(650*1000);
 
 			// change the way we update the string array if we're no longer on our first cycle
 			if (curRun > 8)	firstCycle = false;
@@ -212,21 +219,11 @@ int main(int argc, char* argv[]) {
 			printStrVector();
 
 			refresh();
-			usleep(300*1000);
+			usleep(500*1000);
 		}
 
-	//Main part used for game
-    //initscr();
-    
-    
-
-    srand(time(NULL));
-    
-
-    
-    draw_all();
-	run_ply();
-	draw_all();
+	
+	
 			
 	
 }
