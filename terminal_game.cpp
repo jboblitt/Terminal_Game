@@ -24,7 +24,7 @@ using namespace std;
 typedef unsigned short int num;
 #define PLAYER "8_8"
 #define LIVES 5
-#define FPS 20
+#define FPS 60
 #define PPF 50
 #define SECOND 1000000
 
