@@ -111,7 +111,11 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
+<<<<<<< HEAD
 
+=======
+	char possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
+>>>>>>> 7eba4fe6e4f83f36185bb229882e998f0880a811
 	
     //mvprintw(25, 25, art);
 
@@ -176,9 +180,13 @@ void run_ply() {
 		
 		// Wait for user input
 		getch();
+<<<<<<< HEAD
 		move(LINES/2,COLS/2-8);
 		clrtoeol();
 
+=======
+		clear();
+>>>>>>> 7eba4fe6e4f83f36185bb229882e998f0880a811
 		
 		nodelay(stdscr,TRUE);
 		cbreak();
