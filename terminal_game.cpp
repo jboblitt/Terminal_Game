@@ -1,11 +1,3 @@
-/*
-
-Text based game that needs to:
-
-* Rain letters over a player (which is an ASCII character)
-* Know where our player is at all times, know if a letter exists above that player
-
-*/
 
 #include <iostream>
 #include <curses.h>
@@ -49,7 +41,7 @@ num u;
 num i;
 num x;
 
-// A row of the chararacters in the 'rain' contains the letters in between the newline chars
+// A row of the chararacters in the 'rain' string contains various '#' ASCII characters
 string rainRow9 = "|#   #   #    #  #  #|";
 string rainRow8 = "|      #             |";
 string rainRow7 = "| #          #       |";
@@ -62,25 +54,25 @@ string rainRow1 = "|                 #  |";
 string rainRow0 = "|#         ##  ## #  |";
 string noStr	= "|                    |";
 
-
+// The amount of characters in between the left/right boundaries
 int rainWidth = 20;
 
-
+// The string array contains all the rows of the rain
 string strArray[10] = { rainRow0, rainRow1, rainRow2, rainRow3, rainRow4,rainRow5,rainRow6,rainRow7,rainRow8,rainRow9};
-unsigned int index1 = 0;
 vector<string> myvector;
+
+// Variables used to keep track of the cursor and time
 int curLine = 5;
 int strIndex = 1;
 int curRun = 0;
-
-
 clock_t endwait;
 
+// Contains the character that occupies the position of where the player is about to move
 char possibleCollision;
 
 
 // Prints the current game screen using the string array onto the window 
-// * refresh() should be called afterwards
+// Noe that refresh() should be called afterwards
 void printStrVector()
 {
 	curLine = 5;
@@ -102,6 +94,7 @@ void printStrVector()
 	}
 }
 
+// Function that resets the game if the 'q' key is pressed
 void quit(const char* seq) {
     clear();
     curs_set(2);
@@ -110,27 +103,21 @@ void quit(const char* seq) {
     exit(0);
 }
 
+// Draw the player character and update the players live based on a possible collision
 inline void draw(struct Position obj, const char* art) {
 
-
-	char possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
-
-	
-    //mvprintw(25, 25, art);
-
+	// Store the character that the play may collide into
 	possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
-	//mvprintw(0,0,"%i,%i", obj.x,obj.y);
 
-	if( possibleCollision == '#' ) {
-		ply.lives--;
-		
-	}
+	// Player loses a life if there is '#' character to collide into
+	if ( possibleCollision == '#' ) ply.lives--;	
 	
-	if( ply.lives < 0 ) {
+	// Reset the game based on the players life
+	if ( ply.lives < 1 ) {
 		clear();
 		nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "~Game Over!: PRESS ENTER TO RESTART");
+        mvprintw(0, 0, "Game Over!:\nPRESS ENTER TO RESTART");
 		getch();
 		ply.lives = 5;
 		move(0,0);
@@ -140,10 +127,13 @@ inline void draw(struct Position obj, const char* art) {
 		
 	}
 	
+	// Move the character accordingly
 	mvprintw(obj.y, obj.x, art);
 
 }
 
+
+// Redraws the character if outside the boundary and also updates lives counter
 void draw_all() {
 
 /* Draws counter for lives on screen */
@@ -152,12 +142,12 @@ void draw_all() {
     if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
     if (ply.pos.x > INDENTATION + rainWidth) ply.pos.x = INDENTATION;
     draw(ply.pos, PLAYER);
-    
-    //refresh();
+
 }
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
+   
    in = getch();
 		
     if (in == KEY_LEFT || in == 'a' || in == 'h') {
@@ -170,23 +160,21 @@ void run_ply() {
     } else if (in == 'q' || in == KEY_EXIT) {
         quit("Exited\n");
     } else if (in == 'p') {
+		
 		// Force wait for keystrokes
     	nocbreak();
 		nodelay(stdscr,FALSE);
 		
 		// Display message
-        mvprintw(LINES/2, COLS/2-8, "~Paused: PRESS ENTER TO UNPAUSE");
+        mvprintw(LINES/2, COLS/2-8, "Paused: PRESS ENTER TO RETURN TO GAME");
 		
 		// Wait for user input
 		getch();
 
 		move(LINES/2,COLS/2-8);
 		clrtoeol();
-
-
 		clear();
 
-		
 		nodelay(stdscr,TRUE);
 		cbreak();
     }
@@ -197,7 +185,7 @@ void run_ply() {
 
 }
 
-// Shifts contents of the string array to the right once
+// Shifts contents of the string array to the right by one position
 void updateStrArray()
 {
 	rotate(myvector.begin(),myvector.begin()+9,myvector.end());
@@ -207,6 +195,7 @@ void updateStrArray()
 
 
 int main(int argc, char* argv[]) {
+
 	// initialize the string vector
 	for (int j=0; j<10; j++)
 	{
@@ -217,6 +206,7 @@ int main(int argc, char* argv[]) {
 	/* During the first 10 runs, the string array will add new strings to the array */
 	bool firstCycle = true;	
 	
+	// Initialize ncurses window
 	initscr();
 	noecho();
 	cbreak();
@@ -233,13 +223,13 @@ int main(int argc, char* argv[]) {
 	ply.pos.x = INDENTATION + rainWidth/2;
 	
 	endwait = clock();
-	// start of game loop
+
+	// start of main game loop
 	while (true) {
-		
 		
 		run_ply();
 		draw_all();
-
+		
 		if (firstCycle)
 		{
 			/* Print the current string vector and update the string array */
@@ -251,6 +241,8 @@ int main(int argc, char* argv[]) {
 			curRun++;
 		
 			refresh();
+			
+			usleep(100*1000);
 		
 			// change the way we update the string array if we're no longer on our first cycle
 			if (curRun > 8)	firstCycle = false;
@@ -259,7 +251,7 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			//printw("%d %d", endwait, clock() );
+			
 			if( clock() > endwait ) {
 				endwait = clock() + .5 * CLOCKS_PER_SEC;
 				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
@@ -268,20 +260,13 @@ int main(int argc, char* argv[]) {
 				refresh();
 		 	}
 		}
-
-	
-	
-			
-	
 }
 
 	printw("Press any key to exit the game");
 	getch();
 	
-
 	endwin();
 	
-
 	return 0;
 }
 
