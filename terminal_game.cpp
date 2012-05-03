@@ -11,6 +11,7 @@ Text based game that needs to:
 #include <curses.h>
 #include <ncurses.h>
 #include <string.h>
+#include <time.h>
 #include <algorithm>
 #include <vector>
 
@@ -73,7 +74,7 @@ int strIndex = 1;
 int curRun = 0;
 
 
-
+clock_t endwait;
 
 // Prints the current game screen using the string array onto the window 
 // * refresh() should be called afterwards
@@ -107,11 +108,11 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
+	getinch(
     mvprintw(obj.y, obj.x, art);
 }
 
 void draw_all() {
-    clear();
 
 /* Draws counter for lives on screen */
     //mvprintw(rows-1, 0, "Lives: %u", ply.lives);
@@ -125,15 +126,17 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
-   halfdelay(5);
+   //halfdelay(5);
    
    
    in = getch();
 		
     if (in == KEY_LEFT || in == 'a' || in == 'h') {
+    	mvprintw(ply.pos.y, ply.pos.x, " ");
         ply.pos.x -= (ply.pos.x == 0) ? 0 : 1;
     } 
     else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
+    	mvprintw(ply.pos.y, ply.pos.x, " ");
         ply.pos.x += (ply.pos.x == cols-PLAYER_SIZE) ? 0 : 1;
     } else if (in == 'q' || in == KEY_EXIT) {
         quit("Exited\n");
@@ -161,7 +164,8 @@ void updateStrArray()
 
 
 int main(int argc, char* argv[]) {
-
+	
+	
 	
 	// initialize the string vector
 	for (int j=0; j<10; j++)
@@ -185,10 +189,10 @@ int main(int argc, char* argv[]) {
     PLAYER_SIZE = strlen(PLAYER);
 
     ply.lives = LIVES;
-	ply.pos.y = 15;
+	ply.pos.y = 14;
 	ply.pos.x = INDENTATION + rainWidth/2;
-    
-
+	
+	endwait = clock();
 	// start of game loop
 	while (true) {
 		
@@ -219,11 +223,15 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			rotate(myvector.begin(),myvector.begin()+9,myvector.end());
-			printStrVector();
+			//printw("%d %d", endwait, clock() );
+			if( clock() > endwait ) {
+				endwait = clock() + .5 * CLOCKS_PER_SEC;
+				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
+				printStrVector();
 
-			refresh();
-			//usleep(500*1000);
+				refresh();
+				//usleep(500*1000);
+		 	}
 		}
 
 	
