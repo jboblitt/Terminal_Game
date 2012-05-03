@@ -6,6 +6,8 @@
 #include <time.h>
 #include <algorithm>
 #include <vector>
+#include <stdlib.h>
+#include <stdio.h>
 
 #define INDENTATION 10
 using namespace std;
@@ -40,18 +42,22 @@ num u;
 
 num i;
 num x;
+int points = 0;
+
+/* During the first 10 runs, the string array will add new strings to the array */
+	bool firstCycle = true;	
 
 // A row of the chararacters in the 'rain' string contains various '#' ASCII characters
-string rainRow9 = "|#   #   #    #  #  #|";
-string rainRow8 = "|      #             |";
-string rainRow7 = "| #          #       |";
-string rainRow6 = "|           #    #  #|";
-string rainRow5 = "| #      #  #       #|";
-string rainRow4 = "|  #  #              |";
-string rainRow3 = "|     #  ##          |";
-string rainRow2 = "|              # #   |";
-string rainRow1 = "|                 #  |";
-string rainRow0 = "|#         ##  ## #  |";
+string rainRow9 = "|#   #   #    #     #|";
+string rainRow8 = "|    # #             |";
+string rainRow7 = "|# #    #    #       |";
+string rainRow6 = "|  #         #      #|";
+string rainRow5 = "|      # #  #   #   #|";
+string rainRow4 = "|  #                 |";
+string rainRow3 = "|#     #  #      #   |";
+string rainRow2 = "|  #        #    #   |";
+string rainRow1 = "|    #  #      #    #|";
+string rainRow0 = "|#    #    #    # #  |";
 string noStr	= "|                    |";
 
 // The amount of characters in between the left/right boundaries
@@ -82,6 +88,11 @@ void printStrVector()
 	string row_str;
 	const char *row;
 
+	if (!firstCycle) {
+		myvector.erase(myvector.begin());
+		myvector.insert(myvector.begin(), strArray[rand()%10]);
+	}
+
 	// Print every string in the array, each time skiping over to another line
 	for (it=myvector.begin(); it != myvector.end(); it++)
 	{
@@ -110,17 +121,26 @@ inline void draw(struct Position obj, const char* art) {
 	possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
 
 	// Player loses a life if there is '#' character to collide into
-	if ( possibleCollision == '#' ) ply.lives--;	
+	if ( possibleCollision == '#' ) {
+		ply.lives--;
+	} else if (possibleCollision == ' ') {
+		points++;
+	}	
 	
 	// Reset the game based on the players life
 	if ( ply.lives < 1 ) {
 		clear();
 		nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "Game Over!:\nPRESS ENTER TO RESTART");
+        mvprintw(0, 0, "Game Over!:\nFINAL SCORE %i\nPRESS ENTER TO RESTART",points);
 		getch();
 		ply.lives = 5;
+		points = 0;
 		move(0,0);
+		clrtoeol();
+		move(1,0);
+		clrtoeol();
+		move(2,0);
 		clrtoeol();
 		cbreak();
 		nodelay(stdscr,TRUE);
@@ -137,7 +157,8 @@ inline void draw(struct Position obj, const char* art) {
 void draw_all() {
 
 /* Draws counter for lives on screen */
-    mvprintw(rows-1, 0, "Lives: %u", ply.lives);
+	mvprintw(16,5,"POINTS: %i",points);
+    mvprintw(17, 0, "Lives: %u", ply.lives);
     
     if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
     if (ply.pos.x > INDENTATION + rainWidth) ply.pos.x = INDENTATION;
@@ -203,8 +224,7 @@ int main(int argc, char* argv[]) {
 		else myvector.push_back(rainRow0);
 	}
 
-	/* During the first 10 runs, the string array will add new strings to the array */
-	bool firstCycle = true;	
+	
 	
 	// Initialize ncurses window
 	initscr();
@@ -223,6 +243,10 @@ int main(int argc, char* argv[]) {
 	ply.pos.x = INDENTATION + rainWidth/2;
 	
 	endwait = clock();
+	srand( time(NULL));
+
+	int counter = 0;
+	
 
 	// start of main game loop
 	while (true) {
@@ -241,7 +265,7 @@ int main(int argc, char* argv[]) {
 			curRun++;
 			draw_all();
 			refresh();
-			usleep(150*1000);
+			usleep(250*1000);
 
 
 		
@@ -252,9 +276,10 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			
+			counter++;
+
 			if( clock() > endwait ) {
-				endwait = clock() + .2 * CLOCKS_PER_SEC;
+				endwait = clock() + .35 * CLOCKS_PER_SEC;
 				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
 				printStrVector();
 
