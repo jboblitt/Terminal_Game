@@ -127,8 +127,12 @@ inline void draw(struct Position obj, const char* art) {
 		clear();
 		nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "~Game Over!~");
+        mvprintw(0, 0, "~Game Over!: PRESS ENTER TO RESTART");
 		getch();
+		ply.lives = 5;
+		move(0,0);
+		clrtoeol();
+		cbreak();
 		nodelay(stdscr,TRUE);
 		
 	}
@@ -168,10 +172,14 @@ void run_ply() {
 		nodelay(stdscr,FALSE);
 		
 		// Display message
-        mvprintw(LINES/2, COLS/2-8, "~Paused~");
+        mvprintw(LINES/2, COLS/2-8, "~Paused: PRESS ENTER TO UNPAUSE");
 		
 		// Wait for user input
 		getch();
+		move(LINES/2,COLS/2-8);
+		clrtoeol();
+
+		
 		nodelay(stdscr,TRUE);
 		cbreak();
     }
@@ -263,6 +271,7 @@ int main(int argc, char* argv[]) {
 	printw("Press any key to exit the game");
 	getch();
 	
+
 	endwin();
 	
 
