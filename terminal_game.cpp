@@ -76,6 +76,9 @@ int curRun = 0;
 
 clock_t endwait;
 
+char possibleCollision;
+
+
 // Prints the current game screen using the string array onto the window 
 // * refresh() should be called afterwards
 void printStrVector()
@@ -112,10 +115,12 @@ inline void draw(struct Position obj, const char* art) {
 	
     mvprintw(obj.y, obj.x, art);
 
-	chtype possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
-	
+	possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
+	//mvprintw(0,0,"%i,%i", obj.x,obj.y);
+
 	if( possibleCollision == '#' ) {
 		ply.lives--;
+		
 	}
 	
 	if( ply.lives < 0 ) {
@@ -130,7 +135,6 @@ inline void draw(struct Position obj, const char* art) {
 	
 	mvprintw(obj.y, obj.x, art);
 
->>>>>>> 1d7568749ec876607e2d3f33cd97d9f4014a3794
 }
 
 void draw_all() {
