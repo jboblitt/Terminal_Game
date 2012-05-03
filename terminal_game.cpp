@@ -239,10 +239,11 @@ int main(int argc, char* argv[]) {
 			/* Update the current run that we are on and the current string array index */
 			strIndex++;
 			curRun++;
-		
+			draw_all();
 			refresh();
-			
-			usleep(100*1000);
+			usleep(150*1000);
+
+
 		
 			// change the way we update the string array if we're no longer on our first cycle
 			if (curRun > 8)	firstCycle = false;
@@ -253,7 +254,7 @@ int main(int argc, char* argv[]) {
 		{
 			
 			if( clock() > endwait ) {
-				endwait = clock() + .5 * CLOCKS_PER_SEC;
+				endwait = clock() + .2 * CLOCKS_PER_SEC;
 				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
 				printStrVector();
 
