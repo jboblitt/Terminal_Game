@@ -147,9 +147,6 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
-   //halfdelay(5);
-   
-   
    in = getch();
 		
     if (in == KEY_LEFT || in == 'a' || in == 'h') {
@@ -162,11 +159,17 @@ void run_ply() {
     } else if (in == 'q' || in == KEY_EXIT) {
         quit("Exited\n");
     } else if (in == 'p') {
+		// Force wait for keystrokes
     	nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "~Paused~");
+		
+		// Display message
+        mvprintw(LINES/2, COLS/2-8, "~Paused~");
+		
+		// Wait for user input
 		getch();
 		nodelay(stdscr,TRUE);
+		cbreak();
     }
     
     if( in != ERR ) {
@@ -185,9 +188,6 @@ void updateStrArray()
 
 
 int main(int argc, char* argv[]) {
-	
-	
-	
 	// initialize the string vector
 	for (int j=0; j<10; j++)
 	{
@@ -223,10 +223,6 @@ int main(int argc, char* argv[]) {
 
 		if (firstCycle)
 		{
-
-			// wait a specific number of micro-seconds
-			//usleep(500*1000);
-
 			/* Print the current string vector and update the string array */
 			printStrVector();
 			updateStrArray();
@@ -251,7 +247,6 @@ int main(int argc, char* argv[]) {
 				printStrVector();
 
 				refresh();
-				//usleep(500*1000);
 		 	}
 		}
 
