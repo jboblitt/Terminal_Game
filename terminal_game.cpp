@@ -11,6 +11,7 @@ Text based game that needs to:
 #include <curses.h>
 #include <ncurses.h>
 #include <string.h>
+#include <time.h>
 #include <algorithm>
 #include <vector>
 
@@ -37,7 +38,7 @@ struct Position {
 
 struct Ply {
     struct Position pos;
-    num lives;
+    int lives;
 };
 
 struct Ply ply;
@@ -73,7 +74,7 @@ int strIndex = 1;
 int curRun = 0;
 
 
-
+clock_t endwait;
 
 // Prints the current game screen using the string array onto the window 
 // * refresh() should be called afterwards
@@ -107,14 +108,30 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
-    mvprintw(obj.y, obj.x, art);
+	chtype possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
+	
+	if( possibleCollision == '#' ) {
+		ply.lives--;
+	}
+	
+	if( ply.lives < 0 ) {
+		clear();
+		nocbreak();
+		nodelay(stdscr,FALSE);
+        mvprintw(0, 0, "~Game Over!~");
+		getch();
+		nodelay(stdscr,TRUE);
+		
+	}
+	
+	mvprintw(obj.y, obj.x, art);
+
 }
 
 void draw_all() {
-    clear();
 
 /* Draws counter for lives on screen */
-    //mvprintw(rows-1, 0, "Lives: %u", ply.lives);
+    mvprintw(rows-1, 0, "Lives: %u", ply.lives);
     
     if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
     if (ply.pos.x > INDENTATION + rainWidth) ply.pos.x = INDENTATION;
@@ -125,24 +142,29 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
-   halfdelay(5);
-   
-   
    in = getch();
 		
     if (in == KEY_LEFT || in == 'a' || in == 'h') {
+    	mvprintw(ply.pos.y, ply.pos.x, " ");
         ply.pos.x -= (ply.pos.x == 0) ? 0 : 1;
     } 
     else if (in == KEY_RIGHT || in == 'd' || in == 'k') {
+    	mvprintw(ply.pos.y, ply.pos.x, " ");
         ply.pos.x += (ply.pos.x == cols-PLAYER_SIZE) ? 0 : 1;
     } else if (in == 'q' || in == KEY_EXIT) {
         quit("Exited\n");
     } else if (in == 'p') {
+		// Force wait for keystrokes
     	nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "~Paused~");
+		
+		// Display message
+        mvprintw(LINES/2, COLS/2-8, "~Paused~");
+		
+		// Wait for user input
 		getch();
 		nodelay(stdscr,TRUE);
+		cbreak();
     }
     
     if( in != ERR ) {
@@ -161,8 +183,6 @@ void updateStrArray()
 
 
 int main(int argc, char* argv[]) {
-
-	
 	// initialize the string vector
 	for (int j=0; j<10; j++)
 	{
@@ -185,10 +205,10 @@ int main(int argc, char* argv[]) {
     PLAYER_SIZE = strlen(PLAYER);
 
     ply.lives = LIVES;
-	ply.pos.y = 15;
+	ply.pos.y = 14;
 	ply.pos.x = INDENTATION + rainWidth/2;
-    
-
+	
+	endwait = clock();
 	// start of game loop
 	while (true) {
 		
@@ -198,10 +218,6 @@ int main(int argc, char* argv[]) {
 
 		if (firstCycle)
 		{
-
-			// wait a specific number of micro-seconds
-			//usleep(500*1000);
-
 			/* Print the current string vector and update the string array */
 			printStrVector();
 			updateStrArray();
@@ -219,11 +235,14 @@ int main(int argc, char* argv[]) {
 		/* If no longer on the first cycle */
 		else 
 		{
-			rotate(myvector.begin(),myvector.begin()+9,myvector.end());
-			printStrVector();
+			//printw("%d %d", endwait, clock() );
+			if( clock() > endwait ) {
+				endwait = clock() + .5 * CLOCKS_PER_SEC;
+				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
+				printStrVector();
 
-			refresh();
-			//usleep(500*1000);
+				refresh();
+		 	}
 		}
 
 	
