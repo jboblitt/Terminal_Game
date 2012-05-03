@@ -38,7 +38,7 @@ struct Position {
 
 struct Ply {
     struct Position pos;
-    num lives;
+    int lives;
 };
 
 struct Ply ply;
@@ -108,14 +108,30 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
-	getinch(
-    mvprintw(obj.y, obj.x, art);
+	chtype possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
+	
+	if( possibleCollision == '#' ) {
+		ply.lives--;
+	}
+	
+	if( ply.lives < 0 ) {
+		clear();
+		nocbreak();
+		nodelay(stdscr,FALSE);
+        mvprintw(0, 0, "~Game Over!~");
+		getch();
+		nodelay(stdscr,TRUE);
+		
+	}
+	
+	mvprintw(obj.y, obj.x, art);
+
 }
 
 void draw_all() {
 
 /* Draws counter for lives on screen */
-    //mvprintw(rows-1, 0, "Lives: %u", ply.lives);
+    mvprintw(rows-1, 0, "Lives: %u", ply.lives);
     
     if (ply.pos.x < INDENTATION) ply.pos.x = INDENTATION;
     if (ply.pos.x > INDENTATION + rainWidth) ply.pos.x = INDENTATION;
