@@ -108,7 +108,7 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
-	chtype possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
+	char possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
 	
 	if( possibleCollision == '#' ) {
 		ply.lives--;
@@ -163,6 +163,8 @@ void run_ply() {
 		
 		// Wait for user input
 		getch();
+		clear();
+		
 		nodelay(stdscr,TRUE);
 		cbreak();
     }
