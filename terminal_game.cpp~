@@ -115,7 +115,7 @@ inline void draw(struct Position obj, const char* art) {
 	}
 	
 	if( ply.lives < 0 ) {
-		clear()
+		clear();
 		nocbreak();
 		nodelay(stdscr,FALSE);
         mvprintw(0, 0, "~Game Over!~");
@@ -142,9 +142,6 @@ void draw_all() {
 
 //Controls the Player, q- quit, p- pause
 void run_ply() {
-   //halfdelay(5);
-   
-   
    in = getch();
 		
     if (in == KEY_LEFT || in == 'a' || in == 'h') {
@@ -159,9 +156,10 @@ void run_ply() {
     } else if (in == 'p') {
     	nocbreak();
 		nodelay(stdscr,FALSE);
-        mvprintw(0, 0, "~Paused~");
+        mvprintw(LINES/2, COLS/2-8, "~Paused~");
 		getch();
 		nodelay(stdscr,TRUE);
+		cbreak();
     }
     
     if( in != ERR ) {
