@@ -49,15 +49,15 @@ num i;
 num x;
 
 // A row of the chararacters in the 'rain' contains the letters in between the newline chars
-string rainRow9 = "|#   #   # ## #  #  #|";
-string rainRow8 = "|      ##       ##   |";
-string rainRow7 = "| #          #  ##   |";
-string rainRow6 = "| ##        #    #  #|";
+string rainRow9 = "|#   #   #    #  #  #|";
+string rainRow8 = "|      #             |";
+string rainRow7 = "| #          #       |";
+string rainRow6 = "|           #    #  #|";
 string rainRow5 = "| #      #  #       #|";
 string rainRow4 = "|  #  #              |";
-string rainRow3 = "|     #  ##  ##      |";
-string rainRow2 = "|  ##          # #   |";
-string rainRow1 = "|              ## #  |";
+string rainRow3 = "|     #  ##          |";
+string rainRow2 = "|              # #   |";
+string rainRow1 = "|                 #  |";
 string rainRow0 = "|#         ##  ## #  |";
 string noStr	= "|                    |";
 
