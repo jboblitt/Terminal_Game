@@ -108,10 +108,10 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
-<<<<<<< HEAD
+
 	
     mvprintw(obj.y, obj.x, art);
-=======
+
 	chtype possibleCollision = mvinch(obj.y, obj.x) & A_CHARTEXT;
 	
 	if( possibleCollision == '#' ) {
