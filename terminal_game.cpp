@@ -108,7 +108,7 @@ void quit(const char* seq) {
 }
 
 inline void draw(struct Position obj, const char* art) {
-	getinch(
+	
     mvprintw(obj.y, obj.x, art);
 }
 
