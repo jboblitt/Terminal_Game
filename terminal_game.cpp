@@ -55,11 +55,11 @@ int points = 0;
 bool firstCycle = true;	
 
 // Character strings that are rows of the the 'rain' string contains various '#' ASCII characters
-string rainRow9 = "|#       #           |";
+string rainRow9 = "|#       #      #    |";
 string rainRow8 = "|      #          #  |";
 string rainRow7 = "|##          #     # |";
 string rainRow6 = "|  #                 |";
-string rainRow5 = "|      #       #    #|";
+string rainRow5 = "|      #       ##   #|";
 string rainRow4 = "|    #      #        |";
 string rainRow3 = "|#               # # |";
 string rainRow2 = "|  #      #  #       |";
@@ -283,8 +283,8 @@ int main(int argc, char* argv[]) {
 		{
 
 			++counter;
-			if (clock() > (endwait-(counter*1.3)) ) {
-				endwait = clock() + .65 * CLOCKS_PER_SEC;
+			if (clock() > (endwait-(counter*0.2)) ) {
+				endwait = clock() + .45 * CLOCKS_PER_SEC;
 				rotate(myvector.begin(),myvector.begin()+9,myvector.end());
 				printStrVector();
 				++points;
